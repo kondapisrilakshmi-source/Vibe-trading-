@@ -34,11 +34,13 @@ from src.agent.tools import BaseTool
 
 _KV_LABEL_RE = re.compile(
     r"(?P<label>[一-龥A-Za-z][^|\n：:*]{1,30})[：:]\s*[~约]?\$?"
-    r"(?P<num>[\d,，.]+)\s*"
+    r"(?P<num>[+\-−]?[\d,，.]+)\s*"
     r"(?P<unit>亿[元美港]?元?|万亿|[xX倍]|%|[BMT])?"
 )
 
-_NUMUNIT_RE = re.compile(r"[~约]?\$?([\d,，.]+)\s*(亿[元美港]?元?|万亿|[xX倍]|%|[BMT])?")
+_NUMUNIT_RE = re.compile(
+    r"[~约]?\$?([+\-−]?[\d,，.]+)\s*(亿[元美港]?元?|万亿|[xX倍]|%|[BMT])?"
+)
 _TABLE_SEP_RE = re.compile(r"^\|[\-\s|:]+\|$")
 
 _SKIP_LABELS = {
@@ -51,7 +53,7 @@ _QUARTER_RE = re.compile(r"(20\d{2}|Q[1-4]|\d{4}\s*Q[1-4])")
 
 def _clean_num(s: str) -> float | None:
     """Normalise a numeric string with commas (ASCII or wide) to float."""
-    s = s.replace(",", "").replace("，", "").strip()
+    s = s.replace(",", "").replace("，", "").replace("−", "-").strip()
     try:
         return float(s)
     except ValueError:
